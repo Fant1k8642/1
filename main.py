@@ -2,10 +2,10 @@ import discord
 from discord.ext import commands
 
 # Токен вашего бота (получите на портале разработчиков Discord)
-TOKEN = 'ВАШ_ТОКЕН_БОТА'
+TOKEN = 'MTUxOTcwNzcwNjYyMDExNzEyNQ.GFx-R4.2UF49NZ6x1Encm-g9n1zuxkgVQEmYHBln1VJwM'
 
 # ID голосового канала, в который бот должен зайти
-VOICE_CHANNEL_ID = 123456789012345678  # Замените на реальный ID
+VOICE_CHANNEL_ID = 1495076456403959909  # Замените на реальный ID
 
 # Настройка намерений (Intents). Для работы с голосовыми каналами нужен voice_states
 intents = discord.Intents.default()
