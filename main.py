@@ -1,15 +1,20 @@
+import os
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 
-# Токен вашего бота (получите на портале разработчиков Discord)
+# Загружаем переменные окружения из панели хостинга BotHost
+load_dotenv()
 
+# Получаем токен из настроек хостинга
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # ID голосового канала, в который бот должен зайти
-VOICE_CHANNEL_ID = 1495076456403959909  # Замените на реальный ID
+VOICE_CHANNEL_ID = 1495076456403959909  
 
-# Настройка намерений (Intents). Для работы с голосовыми каналами нужен voice_states
+# Настройка намерений (Intents)
 intents = discord.Intents.default()
-intents.message_content = True  # Если захотите добавлять текстовые команды
+intents.message_content = True  
 intents.voice_states = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
