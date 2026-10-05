@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 # Токен вашего бота (получите на портале разработчиков Discord)
-TOKEN = 'MTUxOTcwNzcwNjYyMDExNzEyNQ.GFx-R4.2UF49NZ6x1Encm-g9n1zuxkgVQEmYHBln1VJwM'
+
 
 # ID голосового канала, в который бот должен зайти
 VOICE_CHANNEL_ID = 1495076456403959909  # Замените на реальный ID
