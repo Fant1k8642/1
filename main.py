@@ -35,4 +35,4 @@ async def on_ready():
         print('Канал с таким ID не найден. Убедитесь, что бот добавлен на нужный сервер.')
 
 # Запуск бота
-bot.run(TOKEN)
+bot.run(BOT_TOKEN)
