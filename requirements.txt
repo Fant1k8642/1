@@ -1,4 +1,2 @@
-discord.py
-pynacl
-davey
+discord.py[voice]
 python-dotenv
