@@ -30,6 +30,7 @@ async def safe_connect(channel):
     # Корректно завершаем старые зависшие сессии
     if guild.voice_client:
         try:
+            print("🔄 Закрываем старое подвисшее соединение...")
             await guild.voice_client.disconnect(force=True)
             await asyncio.sleep(2)
         except Exception:
@@ -37,8 +38,9 @@ async def safe_connect(channel):
 
     try:
         print(f'🔄 Попытка подключения к каналу: {channel.name}...')
-        # self_deaf=True критически важен на BotHost, чтобы не тратить входящий трафик
-        vc = await channel.connect(reconnect=True, timeout=20.0, self_deaf=True)
+        # self_deaf=True критически важен на BotHost, чтобы экономить трафик контейнера
+        # Убрали жесткий таймаут в 20 секунд, чтобы дать discord.py завершить handshake самостоятельно
+        vc = await channel.connect(reconnect=True, self_deaf=True)
         print(f'✅ Бот успешно зашел в канал: {channel.name}')
         return vc
     except Exception as e:
@@ -47,8 +49,8 @@ async def safe_connect(channel):
     finally:
         is_connecting = False
 
-# Увеличиваем интервал до 45 секунд, чтобы он превышал таймаут коннекта (20-30с)
-@tasks.loop(seconds=45)
+# Оптимальный интервал проверки для BotHost
+@tasks.loop(seconds=60)
 async def check_voice_connection():
     """Фоновая задача проверки соединения"""
     if is_connecting:
@@ -61,9 +63,10 @@ async def check_voice_connection():
     guild = channel.guild
     vc = guild.voice_client
 
-    # Подключаем только если вообще нет войс-клиента или статус коннекта окончательно упал
+    # Запускаем ручное восстановление ТОЛЬКО если клиента вообще нет 
+    # или он полностью отключен (не в режиме автоматического реконнекта)
     if not vc or not vc.is_connected():
-        print("⚠️ Голосовое соединение отсутствует. Запускаем восстановление...")
+        print("⚠️ Голосовое соединение полностью отсутствует. Восстанавливаем...")
         await safe_connect(channel)
 
 @bot.event
@@ -80,9 +83,9 @@ async def on_ready():
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    """Событие срабатывает только при реальном ручном кике бота из канала"""
+    """Событие срабатывает при изменении статуса голосовых каналов"""
     if member.id == bot.user.id:
-        # Если бота именно выгнали (был канал, теперь нет)
+        # Если бота принудительно кикнули из канала пользователи (был канал, теперь нет)
         if before.channel and not after.channel and not is_connecting:
             print("⚠️ Бот был принудительно отключен пользователем. Переподключаемся...")
             channel = bot.get_channel(VOICE_CHANNEL_ID)
